@@ -1,0 +1,18 @@
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /favicon.ico","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Rating must be between 0-5","level":"error"}
+{"message":"Rating must be between 0-5","level":"error"}
+{"message":"URL not in correct format","level":"error"}
+{"message":"URL not in correct format","level":"error"}
+{"message":"bookmark with id undefined not found.","level":"error"}
+{"message":"URL not in correct format","level":"error"}
+{"message":"Bookmark with id undefined not found.","level":"error"}
+{"message":"Bookmark with id undefined not found.","level":"error"}
+{"message":"Bookmark with id undefined not found.","level":"error"}
+{"message":"Bookmark with id undefined not found.","level":"error"}
+{"message":"Bookmark with id undefined not found.","level":"error"}
+{"message":"Bookmark with id :id=59d91664-a4f3-4b4f-b796-c911183f0613 not found.","level":"error"}
+{"message":"Bookmark with id 59d91664-a4f3-4b4f-b796-c911183f0613 deleted.","level":"info"}
