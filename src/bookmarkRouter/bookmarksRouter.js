@@ -3,15 +3,28 @@ const uuid = require('uuid/v4')
 const logger = require('../logger')
 const store = require('../store')
 const{PORT}=require('../config')
+const bookmarkDatabase = require('./bookmarkDatabse')
 
 const bookmarksRouter = express.Router()
 const bodyParser = express.json()
+
+const setBookmark = bookmark =>({
+  id:bookmark.id,
+  title:bookmark.title,
+  link:bookmark.link,
+  description:bookmark.description,
+  rating:Number(bookmark.rating),
+})
 
 bookmarksRouter
   .route('/bookmarks')
   .get((req, res) => {
     // move implementation logic into here
-    res.json(store.bookmarks)
+    bookmarkDatabase.getAllBookmarks(req.app.get('db'))
+      .then(bookmarks =>{
+        res.json(bookmarks.map(setBookmark))
+      })
+    
   })
   .post(bodyParser, (req, res) => {
     // move implementation logic into here
@@ -43,14 +56,15 @@ bookmarksRouter
   .get((req, res) => {
     // move implementation logic into here
     const {id} = req.params
-    console.log(id);
-    const bookmark = store.bookmarks.find(i=>i.id===id)
-    if(!bookmark){
-        logger.error(`Bookmark with id ${id} not found.`);
-        return res.status(404).send('Not valid bookmark id')
-    }
-
-    res.json(bookmark)
+    //const bookmark = store.bookmarks.find(i=>i.id===id)
+    bookmarkDatabase.getById(req.app.get('db'),id)
+      .then(bookmark =>{
+        if(!bookmark){
+          logger.error(`Bookmark with id ${id} not found.`);
+          return res.status(404).send('Not valid bookmark id')
+        }
+      })
+    res.json(setBookmark(bookmark))
   })
   .delete((req, res) => {
     // move implementation logic into here
