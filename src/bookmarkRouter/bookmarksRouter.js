@@ -86,14 +86,29 @@ bookmarksRouter
   })
 
   .patch(bodyParser,(req, res, next)=>{
-    const { title, url, description, rating } = req.body;
+    const { title, url, description, rating} = req.body;
+    const{id}=req.params;
     const newBookmark ={title,url,description,rating};
-    bookmarkDatabase.updateBookmark(req.app.get('db'),req.params.id,newBookmark)
-      .then(()=>{
-        res.status(204).end();
-          
-      })
-      .catch(next);
+
+    bookmarkDatabase.getById(req.app.get('db'),id)
+      .then(bookmark =>{
+        if(!bookmark){
+          logger.error(`Bookmark with id ${id} not found.`);
+          return res.status(404).send('Not valid bookmark id').end();
+        }
+        else if(!title && !url && !description && !rating){
+          logger.error('No data submitted to patch');
+          return res.status(400).end()
+        }
+        else{
+          bookmarkDatabase.updateBookmark(req.app.get('db'),id,newBookmark)
+          .then(()=>{
+            res.status(204).end();
+                
+          }).catch(next);
+        }
+    }).catch(next);
+
   });
 
 module.exports = bookmarksRouter;
