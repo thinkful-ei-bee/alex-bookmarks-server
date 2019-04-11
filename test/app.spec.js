@@ -7,23 +7,23 @@ describe('App', () => {
     {
        id: 1,
        title: 'Google',
-       link: 'https://google.com',
+       url: 'https://google.com',
        description:'search engine',
-       rating: '5'
+       rating: 5
     },
     {
       id: 2,
       title: 'Wikipedia',
-      link: 'https://wikipedia.org',
+      url: 'https://wikipedia.org',
       description:'wiki',
-      rating: '3'
+      rating: 3
     },
     {
       id: 3,
       title: 'Youtube',
-      link: 'https://youtube.com',
+      url: 'https://youtube.com',
       description:'videos',
-      rating: '5'
+      rating: 5
     },
   ]
   let badBookmarks ={
@@ -71,19 +71,18 @@ describe('App', () => {
             .insert(testBookmarks)
       })
       
-      it(`getAllBookmarks() resolves all articles from 'bookmarks table`, () => {
-        // test that ArticlesService.getAllArticles gets data from table
+      it(`getAllBookmarks() resolves all bookmarks from 'bookmarks table`, () => {
         return supertest(app)
-        .get('/api/bookmarks')
+        .get('/bookmarks')
         .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
         .expect(200,testBookmarks)
       })
       
-      it('responds with 204 and removes the article', () => {
+      it('responds with 204 and removes the bookmark', () => {
         const idToRemove = 2
         const expected = testBookmarks.filter(bookmark => bookmark.id !== idToRemove)
           return supertest(app)
-             .delete(`/api/bookmarks/${idToRemove}`)
+             .delete(`/bookmarks/${idToRemove}`)
              .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
                .expect(204)
                .then(res =>
@@ -106,16 +105,17 @@ describe('App', () => {
         title:'test',
         url:'https://test.com',
         description:'testing',
-        rating:'4',
+        rating: 4,
       }
+
       return supertest(app)
         .post('/bookmarks')
-        .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
         .send(newBookmark)
+        .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
         .expect(201)
         .expect(res=>{
           expect(res.body.title).to.eql(newBookmark.title)
-          expect(res.body.link).to.eql(newBookmark.link)
+          expect(res.body.url).to.eql(newBookmark.url)
           expect(res.body.description).to.eql(newBookmark.description)
           expect(res.body.rating).to.eql(newBookmark.rating)
         })
@@ -133,7 +133,7 @@ describe('App', () => {
 
     it('removes XSS attack content', () => {
       return supertest(app)
-        .get(`/api/bookmarks/${badBookmark.id}`)
+        .get(`/bookmarks/${badBookmark.id}`)
         .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
         .expect(200)
         .expect(res => {
@@ -143,12 +143,12 @@ describe('App', () => {
     })
   })
 
-  describe(`PATCH /api/bookmarks/:bookmark_id`,()=>{
+  describe(`PATCH /bookmarks/:id`,()=>{
     context('Given no bookmarks', ()=>{
       it('responds with 404', ()=>{
         const id = 99999
         return supertest(app)
-          .patch('/api/bookmarks/`${id}`')
+          .patch(`/bookmarks/${id}`)
           .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
           .expect(404,{error:{message:`Bookmark Not Found`}})
       })
@@ -164,7 +164,7 @@ describe('App', () => {
       const newId =2
       const newBookmark ={
         title: 'new title',
-        link: 'https://newlink.com',
+        url: 'https://newlink.com',
         description: 'new desc',
         rating: 5,
       }
@@ -174,12 +174,12 @@ describe('App', () => {
         ...updateArticle
       }
       return supertest(app)
-        .patch(`/api/bookmarks/${newId}`)
+        .patch(`/bookmarks/${newId}`)
         .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
         .send(newBookmark)
         .expect(204).then(res=>{
           supertest(app)
-            .get(`/api/bookmarks/${id}`)
+            .get(`/bookmarks/${id}`)
             .expect(expectedBookmark)
         })
 
