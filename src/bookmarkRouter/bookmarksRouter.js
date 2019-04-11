@@ -5,21 +5,21 @@ const xss = require('xss')
 const logger = require('../logger')
 const store = require('../store')
 const{PORT}=require('../config')
-const bookmarkDatabase = require('./bookmarkDatabse')
+const bookmarkDatabase = require('./bookmarkDatabase')
 
 const bookmarksRouter = express.Router()
 const bodyParser = express.json()
 
 const setBookmark = bookmark =>({
   id:bookmark.id,
-  title:xxs(bookmark.title),
+  title:xss(bookmark.title),
   link:bookmark.link,
   description:xss(bookmark.description),
   rating:Number(bookmark.rating),
 })
 
 bookmarksRouter
-  .route('/')
+  .route('/bookmarks')
   .get((req, res) => {
     // move implementation logic into here
     bookmarkDatabase.getAllBookmarks(req.app.get('db'))
@@ -57,7 +57,7 @@ bookmarksRouter
   })
 
 bookmarksRouter
-  .route('/:id')
+  .route('bookmarks/:id')
   .get((req, res) => {
     // move implementation logic into here
     const {id} = req.params

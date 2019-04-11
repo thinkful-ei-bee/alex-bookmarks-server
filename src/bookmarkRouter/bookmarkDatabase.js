@@ -7,7 +7,7 @@ const bookmarkDatabase ={
     },
     addBookmark(knex,newBookmark){
         return knex
-        .insert(newArticle)
+        .insert(newBookmark)
         .into('bookmarks')
         .returning('*')
         .then(rows=>{
@@ -22,7 +22,7 @@ const bookmarkDatabase ={
     updateBookmark(knex,id,newBookmarkFields){
         return knex('bookmarks')
         .where({ id })
-        .update(newArticleFields)
+        .update(newBookmarkFields)
     
     },
 }

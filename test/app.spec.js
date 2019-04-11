@@ -59,6 +59,7 @@ describe('App', () => {
       it('responds with 200', ()=>{
         return supertest(app)
           .get('/bookmarks')
+          .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
           .expect(200,[])
       })
     })
@@ -74,24 +75,27 @@ describe('App', () => {
         // test that ArticlesService.getAllArticles gets data from table
         return supertest(app)
         .get('/api/bookmarks')
+        .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
         .expect(200,testBookmarks)
       })
       
-
-    })
-
-    it('responds with 204 and removes the article', () => {
+      it('responds with 204 and removes the article', () => {
         const idToRemove = 2
         const expected = testBookmarks.filter(bookmark => bookmark.id !== idToRemove)
           return supertest(app)
              .delete(`/api/bookmarks/${idToRemove}`)
+             .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
                .expect(204)
                .then(res =>
                  supertest(app)
                    .get(`/bookmarks`)
                    .expect(expected)
                )
+      })
+
     })
+
+    
 
     //updated bookmark
 
@@ -106,6 +110,7 @@ describe('App', () => {
       }
       return supertest(app)
         .post('/bookmarks')
+        .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
         .send(newBookmark)
         .expect(201)
         .expect(res=>{
@@ -129,6 +134,7 @@ describe('App', () => {
     it('removes XSS attack content', () => {
       return supertest(app)
         .get(`/api/bookmarks/${badBookmark.id}`)
+        .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
         .expect(200)
         .expect(res => {
           expect(res.body[0].title).to.eql(expectedBookmarks.title)
@@ -143,11 +149,12 @@ describe('App', () => {
         const id = 99999
         return supertest(app)
           .patch('/api/bookmarks/`${id}`')
+          .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
           .expect(404,{error:{message:`Bookmark Not Found`}})
       })
     })
 
-    beforeEach('insert bookmarks' () =>{
+    beforeEach('insert bookmarks', () => {
       return db
         .into('bookmarks')
         .insert(testBookmarks)
@@ -168,6 +175,7 @@ describe('App', () => {
       }
       return supertest(app)
         .patch(`/api/bookmarks/${newId}`)
+        .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
         .send(newBookmark)
         .expect(204).then(res=>{
           supertest(app)
