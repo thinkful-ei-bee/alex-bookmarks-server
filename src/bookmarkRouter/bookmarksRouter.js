@@ -1,5 +1,7 @@
 const express = require('express')
+const path = require('path')
 const uuid = require('uuid/v4')
+const xss = require('xss')
 const logger = require('../logger')
 const store = require('../store')
 const{PORT}=require('../config')
@@ -10,14 +12,14 @@ const bodyParser = express.json()
 
 const setBookmark = bookmark =>({
   id:bookmark.id,
-  title:bookmark.title,
+  title:xxs(bookmark.title),
   link:bookmark.link,
-  description:bookmark.description,
+  description:xss(bookmark.description),
   rating:Number(bookmark.rating),
 })
 
 bookmarksRouter
-  .route('/bookmarks')
+  .route('/')
   .get((req, res) => {
     // move implementation logic into here
     bookmarkDatabase.getAllBookmarks(req.app.get('db'))
@@ -46,13 +48,16 @@ bookmarksRouter
 
     const bookmarks = {id:uuid(),title,url,description,rating}
 
-    store.bookmarks.push(bookmarks);
-    res.status(200).location(`http://localhost:${PORT}/bookmarks/${bookmarks.id}`).json(bookmarks)
+    bookmarkDatabase.addBookmark(req.app.get('db'),bookmarks)
+      .then(bookmark =>{
+        res.status(200).location(path.posix.join(req.originalUrl,`${bookmark.id}`)).json(setBookmark(bookmark))
+      })
+    
 
   })
 
 bookmarksRouter
-  .route('/bookmarks/:id')
+  .route('/:id')
   .get((req, res) => {
     // move implementation logic into here
     const {id} = req.params
@@ -70,24 +75,22 @@ bookmarksRouter
     // move implementation logic into here
     const { id } = req.params;
 
-   const bookmarkPlace = store.bookmarks.findIndex(i => i.id == id);
-   console.log(id);
-   if (bookmarkPlace === -1) {
-     logger.error(`bookmark with id ${id} not found.`);
-     return res
-       .status(404)
-       .send('Not found');
-   }
+   //const bookmarkPlace = store.bookmarks.findIndex(i => i.id == id);
+   bookmarkDatabase.deleteBookmark(req.app.get('db'),id)
+    .then(() =>{
+      logger.info(`Bookmark with id ${id} deleted.`);
+      res.status(204).end();
+    })
 
-   console.log("got here");
+  })
 
-   store.bookmarks.splice(bookmarkPlace, 1);
-
-   logger.info(`Bookmark with id ${id} deleted.`);
-
-   res
-     .status(204)
-     .end();
+  .patch(bodyParser,(req,res,next)=>{
+    const { title, url, description, rating } = req.body
+    const newBookmark ={title,url,description,rating}
+    bookmarkDatabase.updateBookmark(req.app.get('db'),req.params.id,newBookmark)
+      .then(()=>{
+        res.status(204).end()
+      })
   })
 
 module.exports = bookmarksRouter
