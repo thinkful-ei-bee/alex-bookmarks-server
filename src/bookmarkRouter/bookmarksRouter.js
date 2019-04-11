@@ -95,7 +95,6 @@ bookmarksRouter
         }
         else if(!title && !url && !description && !rating){
           logger.error('No data submitted to patch');
-<<<<<<< HEAD
           return res.status(400).end();
         }
         else{
@@ -106,19 +105,6 @@ bookmarksRouter
             }).catch(next);
         }
       }).catch(next);
-=======
-          return res.status(400).end()
-        }
-        else{
-          bookmarkDatabase.updateBookmark(req.app.get('db'),id,newBookmark)
-          .then(()=>{
-            res.status(204).end();
-                
-          }).catch(next);
-        }
-    }).catch(next);
->>>>>>> 4c7a461fd8391d8e8851ac0bbae44097621af181
-
   });
 
 module.exports = bookmarksRouter;

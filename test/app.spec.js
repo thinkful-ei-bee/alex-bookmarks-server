@@ -87,11 +87,7 @@ describe('App', () => {
              .expect(204)
              .then(() =>
                 supertest(app)
-<<<<<<< HEAD
                   .get(`/api/bookmarks`)
-=======
-                  .get(`/bookmarks`)
->>>>>>> 4c7a461fd8391d8e8851ac0bbae44097621af181
                   .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
                   .expect(expected)
               )
@@ -131,11 +127,7 @@ describe('App', () => {
 
     it('removes XSS attack content', () => {
       return supertest(app)
-<<<<<<< HEAD
         .get(`/api/bookmarks/${badBookmarks.id}`)
-=======
-        .get(`/bookmarks/${badBookmarks.id}`)
->>>>>>> 4c7a461fd8391d8e8851ac0bbae44097621af181
         .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
         .expect(200)
         .expect(res => {
@@ -166,11 +158,7 @@ describe('App', () => {
       const newId=2
       const newBookmark={}
       return supertest(app)
-<<<<<<< HEAD
         .patch(`/api/bookmarks/${newId}`)
-=======
-        .patch(`/bookmarks/${newId}`)
->>>>>>> 4c7a461fd8391d8e8851ac0bbae44097621af181
         .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
         .send(newBookmark)
         .expect(400)
@@ -192,11 +180,7 @@ describe('App', () => {
         .send(newBookmark)
         .expect(204).then(res=>
            supertest(app)
-<<<<<<< HEAD
             .get(`/api/bookmarks/${newId}`)
-=======
-            .get(`/bookmarks/${newId}`)
->>>>>>> 4c7a461fd8391d8e8851ac0bbae44097621af181
             .set('Authorization',`Bearer ${process.env.API_TOKEN}`)
             .expect(newBookmark)
         )
